@@ -25,18 +25,18 @@ services:
   # Multiple containers like this can be deployed separately - each just needs to run on
   # its own port, and have its own entry in the workspace.yaml file that's loaded by the
       # webserver.
-  docker_example_user_code:
+  docker_example_use_case:
     build:
       context: .
-      dockerfile: ./Dockerfile_user_code
-    container_name: docker_example_user_code
-    image: docker_example_user_code_image
+      dockerfile: ./Dockerfile.use_case
+    container_name: docker_example_use_case
+    image: docker_example_use_case_image
     restart: always
     environment:
       DAGSTER_POSTGRES_USER: "postgres_user"
       DAGSTER_POSTGRES_PASSWORD: "postgres_password"
       DAGSTER_POSTGRES_DB: "postgres_db"
-      DAGSTER_CURRENT_IMAGE: "docker_example_user_code_image"
+      DAGSTER_CURRENT_IMAGE: "docker_example_use_case_image"
     networks:
       - docker_example_network
 
@@ -46,7 +46,7 @@ services:
   docker_example_webserver:
     build:
       context: .
-      dockerfile: ./Dockerfile_dagster
+      dockerfile: ./Dockerfile.dagster
     entrypoint:
       - dagster-webserver
       - -h
@@ -72,7 +72,7 @@ services:
     depends_on:
       docker_example_postgresql:
         condition: service_healthy
-      docker_example_user_code:
+      docker_example_use_case:
         condition: service_started
 
   # This service runs the dagster-daemon process, which is responsible for taking runs
@@ -80,7 +80,7 @@ services:
   docker_example_daemon:
     build:
       context: .
-      dockerfile: ./Dockerfile_dagster
+      dockerfile: ./Dockerfile.dagster
     entrypoint:
       - dagster-daemon
       - run
@@ -98,7 +98,7 @@ services:
     depends_on:
       docker_example_postgresql:
         condition: service_healthy
-      docker_example_user_code:
+      docker_example_use_case:
         condition: service_started
 
 networks:
